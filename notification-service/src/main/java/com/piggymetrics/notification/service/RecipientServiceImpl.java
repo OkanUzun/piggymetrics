@@ -5,7 +5,6 @@ import com.piggymetrics.notification.domain.Recipient;
 import com.piggymetrics.notification.repository.RecipientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -15,14 +14,17 @@ import java.util.List;
 @Service
 public class RecipientServiceImpl implements RecipientService {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private RecipientRepository repository;
+	private final RecipientRepository repository;
 
-	@Override
+    public RecipientServiceImpl(final RecipientRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
 	public Recipient findByAccountName(String accountName) {
-		Assert.hasLength(accountName);
+		Assert.hasLength(accountName, "accountName must have length");
 		return repository.findByAccountName(accountName);
 	}
 
@@ -58,7 +60,7 @@ public class RecipientServiceImpl implements RecipientService {
 			case REMIND:
 				return repository.findReadyForRemind();
 			default:
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException(String.format("type with value %s is not valid", type));
 		}
 	}
 

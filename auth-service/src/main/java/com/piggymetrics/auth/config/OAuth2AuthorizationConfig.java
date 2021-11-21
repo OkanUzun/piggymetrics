@@ -1,12 +1,11 @@
 package com.piggymetrics.auth.config;
 
 import com.piggymetrics.auth.service.security.MongoUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -22,18 +21,20 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @EnableAuthorizationServer
 public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
-    private TokenStore tokenStore = new InMemoryTokenStore();
-    private final String NOOP_PASSWORD_ENCODE = "{noop}";
+    private final TokenStore tokenStore = new InMemoryTokenStore();
 
-    @Autowired
-    @Qualifier("authenticationManagerBean")
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private MongoUserDetailsService userDetailsService;
+    private final MongoUserDetailsService userDetailsService;
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
+
+    public OAuth2AuthorizationConfig(final @Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager, final MongoUserDetailsService userDetailsService, final Environment env) {
+        super();
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.env = env;
+    }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -64,7 +65,7 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
                 .tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
@@ -72,11 +73,11 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
         oauthServer
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
-                .passwordEncoder(NoOpPasswordEncoder.getInstance());
+                .passwordEncoder(PasswordEncoderFactories.createDelegatingPasswordEncoder());
     }
 
 }

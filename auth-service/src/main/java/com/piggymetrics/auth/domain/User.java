@@ -10,6 +10,7 @@ import java.util.List;
 @Document(collection = "users")
 public class User implements UserDetails {
 
+	private static final long serialVersionUID = -2_028_453_732_117_468_443L;
 	@Id
 	private String username;
 

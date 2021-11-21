@@ -9,7 +9,6 @@ import com.piggymetrics.account.domain.User;
 import com.piggymetrics.account.repository.AccountRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -19,23 +18,26 @@ import java.util.Date;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private StatisticsServiceClient statisticsClient;
+	private final StatisticsServiceClient statisticsClient;
 
-	@Autowired
-	private AuthServiceClient authClient;
+	private final AuthServiceClient authClient;
 
-	@Autowired
-	private AccountRepository repository;
+	private final AccountRepository repository;
+
+	public AccountServiceImpl(final StatisticsServiceClient statisticsClient, final AuthServiceClient authClient, final AccountRepository repository) {
+		this.statisticsClient = statisticsClient;
+		this.authClient = authClient;
+		this.repository = repository;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public Account findByName(String accountName) {
-		Assert.hasLength(accountName);
+		Assert.hasLength(accountName, "accountName must have length");
 		return repository.findByName(accountName);
 	}
 
@@ -54,8 +56,8 @@ public class AccountServiceImpl implements AccountService {
 		saving.setAmount(new BigDecimal(0));
 		saving.setCurrency(Currency.getDefault());
 		saving.setInterest(new BigDecimal(0));
-		saving.setDeposit(false);
-		saving.setCapitalization(false);
+		saving.setDeposit(Boolean.FALSE);
+		saving.setCapitalization(Boolean.FALSE);
 
 		Account account = new Account();
 		account.setName(user.getUsername());

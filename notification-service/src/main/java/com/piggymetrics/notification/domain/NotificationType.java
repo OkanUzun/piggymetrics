@@ -5,9 +5,9 @@ public enum NotificationType {
 	BACKUP("backup.email.subject", "backup.email.text", "backup.email.attachment"),
 	REMIND("remind.email.subject", "remind.email.text", null);
 
-	private String subject;
-	private String text;
-	private String attachment;
+	private final String subject;
+	private final String text;
+	private final String attachment;
 
 	NotificationType(String subject, String text, String attachment) {
 		this.subject = subject;

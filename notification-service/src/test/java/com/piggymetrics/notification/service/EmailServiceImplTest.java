@@ -68,7 +68,7 @@ public class EmailServiceImplTest {
 	}
 
 	@Test
-	public void shouldSendRemindEmail() throws MessagingException, IOException {
+	public void shouldSendRemindEmail() throws MessagingException {
 
 		final String subject = "subject";
 		final String text = "text";

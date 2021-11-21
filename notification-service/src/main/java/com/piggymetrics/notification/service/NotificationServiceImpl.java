@@ -5,7 +5,6 @@ import com.piggymetrics.notification.domain.NotificationType;
 import com.piggymetrics.notification.domain.Recipient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +14,19 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private AccountServiceClient client;
+	private final AccountServiceClient client;
 
-	@Autowired
-	private RecipientService recipientService;
+	private final RecipientService recipientService;
 
-	@Autowired
-	private EmailService emailService;
+	private final EmailService emailService;
+
+	public NotificationServiceImpl(final AccountServiceClient client, final RecipientService recipientService, final EmailService emailService) {
+		this.client = client;
+		this.recipientService = recipientService;
+		this.emailService = emailService;
+	}
 
 	@Override
 	@Scheduled(cron = "${backup.cron}")

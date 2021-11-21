@@ -11,9 +11,9 @@ import java.math.BigDecimal;
  */
 public class ItemMetric {
 
-	private String title;
+	private final String title;
 
-	private BigDecimal amount;
+	private final BigDecimal amount;
 
 	public ItemMetric(String title, BigDecimal amount) {
 		this.title = title;
@@ -31,7 +31,7 @@ public class ItemMetric {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || this.getClass() != o.getClass()) return false;
 
 		ItemMetric that = (ItemMetric) o;
 

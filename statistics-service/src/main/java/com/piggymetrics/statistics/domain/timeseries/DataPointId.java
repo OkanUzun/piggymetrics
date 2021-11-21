@@ -7,9 +7,9 @@ public class DataPointId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String account;
+	private final String account;
 
-	private Date date;
+	private final Date date;
 
 	public DataPointId(String account, Date date) {
 		this.account = account;

@@ -28,9 +28,9 @@ import java.util.*;
 
 public class CustomUserInfoTokenServices implements ResourceServerTokenServices {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log logger = LogFactory.getLog(this.getClass());
 
-	private static final String[] PRINCIPAL_KEYS = new String[] { "user", "username",
+	private static final String[] PRINCIPAL_KEYS = { "user", "username",
 			"userid", "user_id", "login", "id", "name" };
 
 	private final String userInfoEndpointUrl;
@@ -63,17 +63,17 @@ public class CustomUserInfoTokenServices implements ResourceServerTokenServices 
 	@Override
 	public OAuth2Authentication loadAuthentication(String accessToken)
 			throws AuthenticationException, InvalidTokenException {
-		Map<String, Object> map = getMap(this.userInfoEndpointUrl, accessToken);
+		Map<String, Object> map = this.getMap(this.userInfoEndpointUrl, accessToken);
 		if (map.containsKey("error")) {
 			this.logger.debug("userinfo returned error: " + map.get("error"));
 			throw new InvalidTokenException(accessToken);
 		}
-		return extractAuthentication(map);
+		return this.extractAuthentication(map);
 	}
 
 	private OAuth2Authentication extractAuthentication(Map<String, Object> map) {
-		Object principal = getPrincipal(map);
-		OAuth2Request request = getRequest(map);
+		Object principal = this.getPrincipal(map);
+		OAuth2Request request = this.getRequest(map);
 		List<GrantedAuthority> authorities = this.authoritiesExtractor
 				.extractAuthorities(map);
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
@@ -83,12 +83,7 @@ public class CustomUserInfoTokenServices implements ResourceServerTokenServices 
 	}
 
 	private Object getPrincipal(Map<String, Object> map) {
-		for (String key : PRINCIPAL_KEYS) {
-			if (map.containsKey(key)) {
-				return map.get(key);
-			}
-		}
-		return "unknown";
+		return Arrays.stream(PRINCIPAL_KEYS).filter(map::containsKey).findFirst().map(map::get).orElse("unknown");
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -97,7 +92,7 @@ public class CustomUserInfoTokenServices implements ResourceServerTokenServices 
 
 		String clientId = (String) request.get("clientId");
 		Set<String> scope = new LinkedHashSet<>(request.containsKey("scope") ?
-				(Collection<String>) request.get("scope") : Collections.<String>emptySet());
+				(Collection<String>) request.get("scope") : Collections.emptySet());
 
 		return new OAuth2Request(null, clientId, null, true, new HashSet<>(scope),
 				null, null, null, null);
@@ -131,7 +126,7 @@ public class CustomUserInfoTokenServices implements ResourceServerTokenServices 
 		catch (Exception ex) {
 			this.logger.info("Could not fetch user details: " + ex.getClass() + ", "
 					+ ex.getMessage());
-			return Collections.<String, Object>singletonMap("error",
+			return Collections.singletonMap("error",
 					"Could not fetch user details");
 		}
 	}

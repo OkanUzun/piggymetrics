@@ -24,7 +24,7 @@ public class StatisticsServiceClientFallbackTest {
     private StatisticsServiceClient statisticsServiceClient;
 
     @Rule
-    public final OutputCapture outputCapture = new OutputCapture();
+    private final OutputCapture outputCapture = new OutputCapture();
 
     @Before
     public void setup() {
@@ -38,6 +38,5 @@ public class StatisticsServiceClientFallbackTest {
         outputCapture.expect(containsString("Error during update statistics for account: test"));
 
     }
-
 }
 

@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -100,8 +100,8 @@ public class AccountServiceTest {
 		final Account update = new Account();
 		update.setName("test");
 		update.setNote("test note");
-		update.setIncomes(Arrays.asList(salary));
-		update.setExpenses(Arrays.asList(grocery));
+		update.setIncomes(List.of(salary));
+		update.setExpenses(List.of(grocery));
 		update.setSaving(saving);
 
 		final Account account = new Account();
@@ -140,8 +140,8 @@ public class AccountServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldFailWhenNoAccountsExistedWithGivenName() {
 		final Account update = new Account();
-		update.setIncomes(Arrays.asList(new Item()));
-		update.setExpenses(Arrays.asList(new Item()));
+		update.setIncomes(List.of(new Item()));
+		update.setExpenses(List.of(new Item()));
 
 		when(accountService.findByName("test")).thenReturn(null);
 		accountService.saveChanges("test", update);

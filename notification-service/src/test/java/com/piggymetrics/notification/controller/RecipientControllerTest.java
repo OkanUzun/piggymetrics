@@ -49,7 +49,7 @@ public class RecipientControllerTest {
 	@Test
 	public void shouldSaveCurrentRecipientSettings() throws Exception {
 
-		Recipient recipient = getStubRecipient();
+		Recipient recipient = this.getStubRecipient();
 		String json = mapper.writeValueAsString(recipient);
 
 		mockMvc.perform(put("/recipients/current").principal(new UserPrincipal(recipient.getAccountName())).contentType(MediaType.APPLICATION_JSON).content(json))
@@ -59,7 +59,7 @@ public class RecipientControllerTest {
 	@Test
 	public void shouldGetCurrentRecipientSettings() throws Exception {
 
-		Recipient recipient = getStubRecipient();
+		Recipient recipient = this.getStubRecipient();
 		when(recipientService.findByAccountName(recipient.getAccountName())).thenReturn(recipient);
 
 		mockMvc.perform(get("/recipients/current").principal(new UserPrincipal(recipient.getAccountName())))

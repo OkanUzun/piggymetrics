@@ -2,7 +2,6 @@ package com.piggymetrics.notification.controller;
 
 import com.piggymetrics.notification.domain.Recipient;
 import com.piggymetrics.notification.service.RecipientService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,10 +14,13 @@ import java.security.Principal;
 @RequestMapping("/recipients")
 public class RecipientController {
 
-	@Autowired
-	private RecipientService recipientService;
+	private final RecipientService recipientService;
 
-	@RequestMapping(path = "/current", method = RequestMethod.GET)
+    public RecipientController(final RecipientService recipientService) {
+        this.recipientService = recipientService;
+    }
+
+    @RequestMapping(path = "/current", method = RequestMethod.GET)
 	public Object getCurrentNotificationsSettings(Principal principal) {
 		return recipientService.findByAccountName(principal.getName());
 	}

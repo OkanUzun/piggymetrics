@@ -2,6 +2,7 @@ package com.piggymetrics.statistics.service;
 
 import com.google.common.collect.ImmutableMap;
 import com.piggymetrics.statistics.domain.*;
+import com.piggymetrics.statistics.domain.Currency;
 import com.piggymetrics.statistics.domain.timeseries.DataPoint;
 import com.piggymetrics.statistics.domain.timeseries.DataPointId;
 import com.piggymetrics.statistics.domain.timeseries.ItemMetric;
@@ -9,7 +10,6 @@ import com.piggymetrics.statistics.domain.timeseries.StatisticMetric;
 import com.piggymetrics.statistics.repository.DataPointRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -18,29 +18,29 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private DataPointRepository repository;
+	private final DataPointRepository repository;
 
-	@Autowired
-	private ExchangeRatesService ratesService;
+	private final ExchangeRatesService ratesService;
+
+	public StatisticsServiceImpl(final DataPointRepository repository, final ExchangeRatesService ratesService) {
+		this.repository = repository;
+		this.ratesService = ratesService;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public List<DataPoint> findByAccountName(String accountName) {
-		Assert.hasLength(accountName);
+		Assert.hasLength(accountName, "accountName must have length");
 		return repository.findByIdAccount(accountName);
 	}
 
@@ -63,7 +63,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 				.map(this::createItemMetric)
 				.collect(Collectors.toSet());
 
-		Map<StatisticMetric, BigDecimal> statistics = createStatisticMetrics(incomes, expenses, account.getSaving());
+		Map<StatisticMetric, BigDecimal> statistics = this.createStatisticMetrics(incomes, expenses, account.getSaving());
 
 		DataPoint dataPoint = new DataPoint();
 		dataPoint.setId(pointId);
@@ -77,7 +77,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		return repository.save(dataPoint);
 	}
 
-	private Map<StatisticMetric, BigDecimal> createStatisticMetrics(Set<ItemMetric> incomes, Set<ItemMetric> expenses, Saving saving) {
+	private Map<StatisticMetric, BigDecimal> createStatisticMetrics(Collection<? extends ItemMetric> incomes, Collection<? extends ItemMetric> expenses, Saving saving) {
 
 		BigDecimal savingAmount = ratesService.convert(saving.getCurrency(), Currency.getBase(), saving.getAmount());
 

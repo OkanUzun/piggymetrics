@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,7 +28,7 @@ public class AccountRepositoryTest {
 	@Test
 	public void shouldFindAccountByName() {
 
-		Account stub = getStubAccount();
+		Account stub = this.getStubAccount();
 		repository.save(stub);
 
 		Account found = repository.findByName(stub.getName());
@@ -73,7 +74,7 @@ public class AccountRepositoryTest {
 		account.setLastSeen(new Date());
 		account.setSaving(saving);
 		account.setExpenses(Arrays.asList(grocery, vacation));
-		account.setIncomes(Arrays.asList(salary));
+		account.setIncomes(List.of(salary));
 
 		return account;
 	}

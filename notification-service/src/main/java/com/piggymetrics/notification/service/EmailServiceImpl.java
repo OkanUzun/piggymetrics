@@ -4,7 +4,6 @@ import com.piggymetrics.notification.domain.NotificationType;
 import com.piggymetrics.notification.domain.Recipient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
@@ -15,23 +14,25 @@ import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 import java.text.MessageFormat;
 
 @Service
 @RefreshScope
 public class EmailServiceImpl implements EmailService {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private JavaMailSender mailSender;
+	private final JavaMailSender mailSender;
 
-	@Autowired
-	private Environment env;
+	private final Environment env;
+
+	public EmailServiceImpl(final JavaMailSender mailSender, final Environment env) {
+		this.mailSender = mailSender;
+		this.env = env;
+	}
 
 	@Override
-	public void send(NotificationType type, Recipient recipient, String attachment) throws MessagingException, IOException {
+	public void send(NotificationType type, Recipient recipient, String attachment) throws MessagingException {
 
 		final String subject = env.getProperty(type.getSubject());
 		final String text = MessageFormat.format(env.getProperty(type.getText()), recipient.getAccountName());

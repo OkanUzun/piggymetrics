@@ -6,7 +6,6 @@ import com.piggymetrics.statistics.domain.Currency;
 import com.piggymetrics.statistics.domain.ExchangeRatesContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -22,8 +21,11 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
 
 	private ExchangeRatesContainer container;
 
-	@Autowired
-	private ExchangeRatesClient client;
+	private final ExchangeRatesClient client;
+
+	public ExchangeRatesServiceImpl(final ExchangeRatesClient client) {
+		this.client = client;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -49,9 +51,9 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
 	@Override
 	public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {
 
-		Assert.notNull(amount);
+		Assert.notNull(amount, "amount must not be null");
 
-		Map<Currency, BigDecimal> rates = getCurrentRates();
+		Map<Currency, BigDecimal> rates = this.getCurrentRates();
 		BigDecimal ratio = rates.get(to).divide(rates.get(from), 4, RoundingMode.HALF_UP);
 
 		return amount.multiply(ratio);

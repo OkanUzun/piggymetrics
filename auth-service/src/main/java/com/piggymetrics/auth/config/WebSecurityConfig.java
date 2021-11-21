@@ -1,7 +1,6 @@
 package com.piggymetrics.auth.config;
 
 import com.piggymetrics.auth.service.security.MongoUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,8 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private MongoUserDetailsService userDetailsService;
+    private final MongoUserDetailsService userDetailsService;
+
+    public WebSecurityConfig(final MongoUserDetailsService userDetailsService) {
+        super();
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

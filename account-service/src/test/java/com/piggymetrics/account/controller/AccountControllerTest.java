@@ -53,7 +53,7 @@ public class AccountControllerTest {
 
 		when(accountService.findByName(account.getName())).thenReturn(account);
 
-		mockMvc.perform(get("/" + account.getName()))
+		mockMvc.perform(get('/' + account.getName()))
 				.andExpect(jsonPath("$.name").value(account.getName()))
 				.andExpect(status().isOk());
 	}

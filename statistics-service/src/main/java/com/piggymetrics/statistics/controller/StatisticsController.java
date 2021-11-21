@@ -3,7 +3,6 @@ package com.piggymetrics.statistics.controller;
 import com.piggymetrics.statistics.domain.Account;
 import com.piggymetrics.statistics.domain.timeseries.DataPoint;
 import com.piggymetrics.statistics.service.StatisticsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +13,13 @@ import java.util.List;
 @RestController
 public class StatisticsController {
 
-	@Autowired
-	private StatisticsService statisticsService;
+	private final StatisticsService statisticsService;
 
-	@RequestMapping(value = "/current", method = RequestMethod.GET)
+    public StatisticsController(final StatisticsService statisticsService) {
+        this.statisticsService = statisticsService;
+    }
+
+    @RequestMapping(value = "/current", method = RequestMethod.GET)
 	public List<DataPoint> getCurrentAccountStatistics(Principal principal) {
 		return statisticsService.findByAccountName(principal.getName());
 	}

@@ -1,6 +1,8 @@
 version: '2.1'
 services:
   rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
     ports:
       - 5672:5672
 
@@ -31,9 +33,12 @@ services:
       - 6000:6000
 
   account-mongodb:
+    environment:
+      INIT_DUMP: account-service-dump.js
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
     build: mongodb
     ports:
-      - 26000:27017
+      - 27017:27017
 
   statistics-service:
     build: statistics-service
